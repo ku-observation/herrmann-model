@@ -1,0 +1,5 @@
+{
+  "name": "Herrmann Brain Dominance Analyzer",
+  "description": "An app that analyzes Herrmann Brain Dominance Instrument (HBDI) scores, displays a radar chart, and provides personalized career and task insights.",
+  "requestFramePermissions": []
+}
