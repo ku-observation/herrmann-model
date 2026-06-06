@@ -127,8 +127,8 @@ export default function App() {
   // --- State Management ---
   // 画面の表示状態（'questions': 質問画面, 'results': 分析結果画面）
   const [view, setView] = useState<'questions' | 'results'>('questions');
-  // ユーザーの回答データ（キー: 質問ID, 値: 選択された点数 0, 2, 5）
-  const [answers, setAnswers] = useState<Record<number, 0 | 2 | 5>>({});
+  // ユーザーの回答データ（キー: 質問ID, 値: 選択された点数 1, 3, 5）
+  const [answers, setAnswers] = useState<Record<number, 1 | 3 | 5>>({});
   // 各象限（A, B, C, D）の合計スコア
   const [scores, setScores] = useState({ A: 0, B: 0, C: 0, D: 0 });
   // Gemini APIから返却されたMarkdown形式の分析結果
@@ -204,7 +204,7 @@ export default function App() {
    * 質問の回答が変更されたときの処理
    * 回答状態を更新し、同時に各象限の合計スコアを再計算します。
    */
-  const handleAnswerChange = (questionId: number, score: 0 | 2 | 5) => {
+  const handleAnswerChange = (questionId: number, score: 1 | 3 | 5) => {
     setAnswers(prev => {
       const newAnswers = { ...prev, [questionId]: score };
       const newScores = { A: 0, B: 0, C: 0, D: 0 };
@@ -360,8 +360,11 @@ D象限の作業：${examplesD}
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans">
       <div className="max-w-5xl mx-auto space-y-8" ref={reportRef}>
         <header className="text-center print:mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">ハーマンモデル分析アプリ</h1>
-          <p className="text-gray-600 mt-2">※この診断結果はハーマンモデルの理論に基づく傾向分析であり、個人の可能性を限定するものではありません。</p>
+          <h1 className="text-3xl font-bold text-gray-900">自分の得意再発見チェックリスト</h1>
+          <p className="text-gray-600 mt-2">
+            ※このチェックリストはハーマンモデルの理論に基づく傾向分析であり、<br />
+            　個人の可能性を限定するものではありません。
+          </p>
           <p className="text-gray-600 mt-1 text-sm">
             ※AI分析に関しては、Geminiを使用しています。<br />
             　分析結果は「AIによる回答であり、参考のための活用」としてください
@@ -390,14 +393,14 @@ D象限の作業：${examplesD}
                       <td className="border p-3 text-gray-500 text-center">{q.quadrant}</td>
                       <td className="border p-3 text-center">
                         <div className="flex items-center justify-center gap-3">
-                          {[0, 2, 5].map((score) => (
+                          {[1, 3, 5].map((score) => (
                             <label key={score} className="flex items-center gap-1 cursor-pointer">
                               <input
                                 type="radio"
                                 name={`question-${q.id}`}
                                 value={score}
                                 checked={answers[q.id] === score}
-                                onChange={() => handleAnswerChange(q.id, score as 0 | 2 | 5)}
+                                onChange={() => handleAnswerChange(q.id, score as 1 | 3 | 5)}
                                 className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                               />
                               <span className="text-gray-700">{score}</span>
@@ -442,7 +445,7 @@ D象限の作業：${examplesD}
                     <RadarChart cx="50%" cy="50%" outerRadius="65%" data={chartData}>
                       <PolarGrid />
                       <PolarAngleAxis dataKey="subject" tick={<CustomTick />} />
-                      <PolarRadiusAxis angle={30} domain={[0, 65]} />
+                      <PolarRadiusAxis angle={30} domain={[0, 65]} ticks={[0, 10, 20, 30, 40, 50, 60]} />
                       <Radar name="Score" dataKey="A" stroke="#9ca3af" fill="#f3f4f6" fillOpacity={0.8} dot={<CustomDot />} />
                     </RadarChart>
                   </ResponsiveContainer>
@@ -471,7 +474,7 @@ D象限の作業：${examplesD}
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 print:flex print:flex-row">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 print:flex print:flex-row print:break-inside-avoid">
               {/* Score Summary Section */}
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 print:w-1/2 print:shadow-none print:border-gray-300">
                 <h2 className="text-xl font-semibold mb-4 text-gray-800">スコア結果</h2>
@@ -501,7 +504,7 @@ D象限の作業：${examplesD}
                     <RadarChart cx="50%" cy="50%" outerRadius="65%" data={chartData}>
                       <PolarGrid />
                       <PolarAngleAxis dataKey="subject" tick={<CustomTick />} />
-                      <PolarRadiusAxis angle={30} domain={[0, 65]} />
+                      <PolarRadiusAxis angle={30} domain={[0, 65]} ticks={[0, 10, 20, 30, 40, 50, 60]} />
                       <Radar name="Score" dataKey="A" stroke="#9ca3af" fill="#f3f4f6" fillOpacity={0.8} dot={<CustomDot />} />
                     </RadarChart>
                   </ResponsiveContainer>
@@ -511,7 +514,7 @@ D象限の作業：${examplesD}
 
             {/* Explanation Section */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 print:shadow-none print:border-gray-300 print:break-inside-avoid">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">ハーマンモデルの4つの象限</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">4つの象限</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                   <h3 className="font-bold text-blue-800 mb-2">A象限：論理・理性（青）</h3>
@@ -534,8 +537,8 @@ D象限の作業：${examplesD}
 
             {/* Analysis Result Section */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 print:shadow-none print:border-gray-300">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 border-b pb-4 gap-4 print:border-b-2 print:border-gray-800">
-                <h2 className="text-xl font-semibold text-gray-800">分析結果</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 border-b pb-4 gap-4 print:border-b-2 print:border-gray-800 print:break-after-avoid">
+                <h2 className="text-xl font-semibold text-gray-800 print:break-after-avoid">分析結果</h2>
                 <div className="flex flex-col items-end gap-2" data-html2canvas-ignore="true">
                   <div className="flex flex-wrap justify-end gap-2">
                     <button
@@ -569,7 +572,7 @@ D象限の作業：${examplesD}
                   <p className="text-gray-600">AIが分析結果を生成しています...</p>
                 </div>
               ) : analysis ? (
-                <div className="prose prose-blue max-w-none prose-headings:text-gray-800 prose-p:text-gray-600 prose-li:text-gray-600 prose-table:w-full prose-table:border-collapse prose-table:my-8 [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-50 [&_th]:p-5 [&_th]:text-left [&_th]:whitespace-nowrap [&_td]:border [&_td]:border-gray-300 [&_td]:p-5 [&_td]:align-top [&_td:first-child]:whitespace-nowrap [&_tr]:print:break-inside-avoid">
+                <div className="prose prose-blue max-w-none prose-headings:text-gray-800 prose-p:text-gray-600 prose-li:text-gray-600 prose-table:w-full prose-table:border-collapse prose-table:my-8 [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-50 [&_th]:p-5 [&_th]:text-left [&_th]:whitespace-nowrap [&_td]:border [&_td]:border-gray-300 [&_td]:p-5 [&_td]:align-top [&_td:first-child]:whitespace-nowrap [&_tr]:print:break-inside-avoid [&_p]:print:break-inside-avoid [&_h1]:print:break-after-avoid [&_h2]:print:break-after-avoid [&_h3]:print:break-after-avoid [&_h4]:print:break-after-avoid [&_li]:print:break-inside-avoid [&_blockquote]:print:break-inside-avoid">
                   <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                     {analysis}
                   </Markdown>
