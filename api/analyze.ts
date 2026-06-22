@@ -35,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Flashモデルの方が無料枠の制限（クォータ）が緩く、本番運用に向いています
     // クォータエラーが頻発する場合は 'gemini-3.1-flash' への変更をご検討ください
     const response = await ai.models.generateContent({
-      model: 'gemini-3.1-pro-preview', // より速く安定した応答が必要な場合は 'gemini-3.1-flash' に変更
+      model: 'gemini-3.1-flash', // より速く安定した応答が必要な場合は 'gemini-3.1-flash' 'gemini-3.1-pro-preview' に変更
       contents: prompt,
     });
 
