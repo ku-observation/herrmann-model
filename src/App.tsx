@@ -16,15 +16,12 @@
  */
 import React, { useState, useRef } from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
-import { GoogleGenAI } from '@google/genai';
 import { Loader2, Download, Info, ArrowLeft, FileSpreadsheet } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { toPng } from 'html-to-image';
 import { jsPDF } from 'jspdf';
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const quadrantColors = {
   'A (論理・理性)': '#3b82f6',
@@ -330,12 +327,21 @@ D象限の作業：${examplesD}
 |---|---|
 `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
-        contents: prompt,
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt })
       });
 
-      setAnalysis(response.text || "分析結果を取得できませんでした。");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Failed to analyze');
+      }
+
+      setAnalysis(data.analysis || "分析結果を取得できませんでした。");
     } catch (error: any) {
       console.error("Error generating analysis:", error);
       const errorMessage = error?.message || String(error);
